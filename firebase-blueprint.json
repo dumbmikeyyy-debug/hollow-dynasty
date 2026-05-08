@@ -1,0 +1,80 @@
+{
+  "entities": {
+    "Product": {
+      "title": "Product",
+      "description": "An aesthetic room setup product",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "description": { "type": "string" },
+        "price": { "type": "number" },
+        "discountPrice": { "type": "number" },
+        "stock": { "type": "number" },
+        "images": { "type": "array", "items": { "type": "string" } },
+        "category": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["name", "price", "images", "stock"]
+    },
+    "Order": {
+      "title": "Order",
+      "description": "A customer order",
+      "type": "object",
+      "properties": {
+        "customer": {
+          "type": "object",
+          "properties": {
+            "name": { "type": "string" },
+            "mobile": { "type": "string" },
+            "email": { "type": "string" },
+            "address": { "type": "string" },
+            "pincode": { "type": "string" },
+            "city": { "type": "string" },
+            "state": { "type": "string" }
+          },
+          "required": ["name", "mobile", "email", "address", "pincode", "city", "state"]
+        },
+        "items": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "productId": { "type": "string" },
+              "name": { "type": "string" },
+              "price": { "type": "number" },
+              "quantity": { "type": "number" }
+            }
+          }
+        },
+        "total": { "type": "number" },
+        "paymentScreenshot": { "type": "string" },
+        "status": { "type": "string", "enum": ["pending", "verified", "shipped", "delivered", "cancelled"] },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["customer", "items", "total", "status", "createdAt"]
+    },
+    "Category": {
+      "title": "Category",
+      "description": "Product category",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" }
+      },
+      "required": ["name"]
+    }
+  },
+  "firestore": {
+    "products": {
+      "schema": "Product",
+      "description": "Collection of products available in the store"
+    },
+    "orders": {
+      "schema": "Order",
+      "description": "Collection of customer orders"
+    },
+    "categories": {
+      "schema": "Category",
+      "description": "Collection of product categories"
+    }
+  }
+}

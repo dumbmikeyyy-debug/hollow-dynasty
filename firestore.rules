@@ -1,0 +1,90 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Default deny
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Helper functions
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isVerified() {
+      return isSignedIn() && request.auth.token.email_verified == true;
+    }
+
+    function isAdmin() {
+      return isVerified() && request.auth.token.email == 'dumb.mikeyyy@gmail.com';
+    }
+
+    function isValidId(id) {
+      return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    function incoming() {
+      return request.resource.data;
+    }
+
+    function existing() {
+      return resource.data;
+    }
+
+    // Product Validation
+    function isValidProduct(data) {
+      return data.name is string && data.name.size() > 0 && data.name.size() <= 200 &&
+             data.price is number && data.price >= 0 &&
+             data.stock is number && data.stock >= 0 &&
+             data.images is list && data.images.size() >= 1 && data.images.size() <= 4 &&
+             (data.get('discountPrice', null) == null || data.discountPrice is number);
+    }
+
+    // Order Validation
+    function isValidOrder(data) {
+      return data.customer is map &&
+             data.customer.name is string && data.customer.name.size() <= 100 &&
+             data.customer.mobile is string && data.customer.mobile.matches('^[0-9]{10}$') &&
+             data.customer.email is string && data.customer.email.size() <= 100 &&
+             data.customer.address is string && data.customer.address.size() <= 500 &&
+             data.customer.pincode is string && data.customer.pincode.matches('^[0-9]{6}$') &&
+             data.customer.city is string && data.customer.city.size() <= 100 &&
+             data.customer.state is string && data.customer.state.size() <= 100 &&
+             data.items is list && data.items.size() > 0 &&
+             data.total is number && data.total >= 0 &&
+             data.status in ['pending', 'verified', 'shipped', 'delivered', 'cancelled'] &&
+             data.createdAt == request.time;
+    }
+
+    // Collections
+    match /products/{productId} {
+      allow read: if true;
+      allow create: if isAdmin() && isValidProduct(incoming()) && isValidId(productId);
+      allow update: if isAdmin() && isValidProduct(incoming());
+      allow delete: if isAdmin();
+    }
+
+    match /orders/{orderId} {
+      // Admin can read all orders. Customers can read their own if authenticated.
+      allow list: if isAdmin() || (isSignedIn() && resource.data.customer.email == request.auth.token.email);
+      allow get: if isAdmin() || (isSignedIn() && resource.data.customer.email == request.auth.token.email);
+      
+      // Anyone can create an order (prepaid checkout flow)
+      // We don't strictly require sign-in to create an order since it's a store, 
+      // but the user's email is captured in the form.
+      allow create: if isValidOrder(incoming()) && isValidId(orderId);
+      
+      // Only admin can update status or payment verification
+      allow update: if isAdmin() && (
+        incoming().diff(existing()).affectedKeys().hasOnly(['status', 'paymentScreenshot'])
+      );
+      
+      allow delete: if isAdmin();
+    }
+
+    match /categories/{categoryId} {
+      allow read: if true;
+      allow write: if isAdmin() && isValidId(categoryId);
+    }
+  }
+}
