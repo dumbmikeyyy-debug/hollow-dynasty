@@ -28,18 +28,18 @@ export default function Navbar({ cart, removeFromCart, updateQuantity, total, on
         <div className="flex items-center justify-between h-24">
           {/* Logo */}
           <Link to="/" className="flex items-center space-x-3 group">
-            <div className="w-12 h-12 bg-[#8B5CF6] rounded-full flex items-center justify-center transition-transform group-hover:scale-110 overflow-hidden border-2 border-aesthetic-dark/10 shadow-lg">
-              <svg viewBox="0 0 100 100" className="w-8 h-8 fill-aesthetic-dark">
-                <g transform="translate(50, 50) rotate(-30)">
+            <div className="w-12 h-12 bg-[#8B5CF6] rounded-full flex items-center justify-center transition-transform group-hover:scale-110 overflow-hidden border-2 border-aesthetic-dark/10 shadow-lg relative">
+              <svg viewBox="0 0 100 100" className="w-9 h-9 fill-aesthetic-dark drop-shadow-sm">
+                <g transform="translate(50, 50)">
                   {[0, 120, 240].map((angle) => (
                     <path
                       key={angle}
                       transform={`rotate(${angle})`}
-                      d="M 0 -32 A 16 16 0 0 1 0 0 A 32 32 0 0 1 -32 0 A 16 16 0 0 1 0 0"
+                      d="M 0 -35 C 20 -35 35 -15 35 5 C 35 25 15 35 0 35 C -15 35 -25 25 -25 5 C -25 -15 -10 -25 0 -25 L 0 -35 Z"
                     />
                   ))}
+                  <circle cx="0" cy="0" r="8" fill="#8B5CF6" />
                 </g>
-                <circle cx="50" cy="50" r="46" fill="none" stroke="currentColor" strokeWidth="1" strokeDasharray="3,2" opacity="0.4" />
               </svg>
             </div>
             <span className="text-xl font-black tracking-tight text-aesthetic-dark hidden md:block">
