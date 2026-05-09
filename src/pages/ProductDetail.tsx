@@ -141,6 +141,16 @@ export default function ProductDetail({ addToCart }: ProductDetailProps) {
                 <ShoppingCart size={22} className="group-hover:scale-110 transition-transform" />
                 Add to Sanctuary
               </button>
+              <button 
+                disabled={product.stock === 0}
+                onClick={() => {
+                  addToCart(product, quantity);
+                  navigate('/checkout');
+                }}
+                className="flex-grow bg-aesthetic-dark text-white font-black px-10 py-5 rounded-full hover:bg-aesthetic-lavender transition-all soft-shadow text-lg flex items-center justify-center gap-3 disabled:opacity-30 disabled:cursor-not-allowed"
+              >
+                Buy Now
+              </button>
             </div>
 
             <div className="grid grid-cols-2 gap-6">

@@ -59,6 +59,15 @@ export default function Checkout({ cart, total, clearCart }: CheckoutProps) {
       return;
     }
     
+    if (formData.mobile.length !== 10 || !/^\d{10}$/.test(formData.mobile)) {
+      alert("ERROR: MOBILE_NUMBER_MUST_BE_10_DIGITS");
+      return;
+    }
+    if (formData.pincode.length !== 6 || !/^\d{6}$/.test(formData.pincode)) {
+      alert("ERROR: PINCODE_MUST_BE_6_DIGITS");
+      return;
+    }
+    
     setIsSubmitting(true);
     try {
       await addDoc(collection(db, 'orders'), {
@@ -161,11 +170,15 @@ export default function Checkout({ cart, total, clearCart }: CheckoutProps) {
               </div>
               <div className="space-y-2">
                 <label className="block text-[10px] font-black text-aesthetic-dark/30 uppercase tracking-widest ml-4">Pincode</label>
-                <input required name="pincode" maxLength={6} value={formData.pincode} onChange={handleInputChange} className="w-full bg-aesthetic-gray rounded-full px-6 py-4 font-bold text-sm focus:bg-white focus:ring-4 ring-aesthetic-lavender/10 outline-none transition-all placeholder:text-aesthetic-dark/20 border border-transparent focus:border-aesthetic-lavender/20" placeholder="110001" />
+                <input required name="pincode" maxLength={6} pattern="[0-9]{6}" value={formData.pincode} onChange={handleInputChange} className="w-full bg-aesthetic-gray rounded-full px-6 py-4 font-bold text-sm focus:bg-white focus:ring-4 ring-aesthetic-lavender/10 outline-none transition-all placeholder:text-aesthetic-dark/20 border border-transparent focus:border-aesthetic-lavender/20" placeholder="110001" />
               </div>
               <div className="space-y-2">
                 <label className="block text-[10px] font-black text-aesthetic-dark/30 uppercase tracking-widest ml-4">City</label>
                 <input required name="city" value={formData.city} onChange={handleInputChange} className="w-full bg-aesthetic-gray rounded-full px-6 py-4 font-bold text-sm focus:bg-white focus:ring-4 ring-aesthetic-lavender/10 outline-none transition-all placeholder:text-aesthetic-dark/20 border border-transparent focus:border-aesthetic-lavender/20" placeholder="Your City" />
+              </div>
+              <div className="md:col-span-2 space-y-2">
+                <label className="block text-[10px] font-black text-aesthetic-dark/30 uppercase tracking-widest ml-4">State</label>
+                <input required name="state" value={formData.state} onChange={handleInputChange} className="w-full bg-aesthetic-gray rounded-full px-6 py-4 font-bold text-sm focus:bg-white focus:ring-4 ring-aesthetic-lavender/10 outline-none transition-all placeholder:text-aesthetic-dark/20 border border-transparent focus:border-aesthetic-lavender/20" placeholder="Your State" />
               </div>
             </form>
           </section>
